@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarda Impianti | Cristian Frattini - Impianti Termoidraulici e Antincendio</title>
+    <meta name="description" content="Sarda Impianti di Cristian Frattini - Progettazione e installazione impianti di climatizzazione, riscaldamento, idraulici e antincendio per civile e industriale in Sardegna.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sarda-blue': '#1e3a5f',
+                        'sarda-light': '#2c5282',
+                        'sarda-gold': '#c9a227',
+                        'sarda-sand': '#f5f0e8',
+                        'sarda-dark': '#0f172a',
+                        'sarda-gray': '#64748b',
+                    },
+                    fontFamily: {
+                        'serif': ['Playfair Display', 'serif'],
+                        'sans': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 9999; pointer-events: none;
+        }
+        .cursor-dot { width: 8px; height: 8px; background-color: #c9a227; }
+        .cursor-outline {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(201, 162, 39, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        .cursor-outline.hover {
+            width: 60px; height: 60px;
+            background-color: rgba(201, 162, 39, 0.1);
+            border-color: #c9a227;
+        }
+
+        .noise-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; pointer-events: none;
+            z-index: 9998; opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .loading-screen {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: #0f172a;
+            z-index: 10000; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .loading-screen.hidden { opacity: 0; visibility: hidden; }
+        .loading-bar {
+            width: 200px; height: 2px; background: rgba(255,255,255,0.1);
+            margin-top: 40px; position: relative; overflow: hidden;
+        }
+        .loading-bar::after {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%; background: #c9a227;
+            animation: loading 1.5s ease-in-out forwards;
+        }
+        @keyframes loading { to { left: 0; } }
+
+        #hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+
+        .magnetic-btn {
+            position: relative; display: inline-flex;
+            align-items: center; justify-content: center;
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .service-card { transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
+        .service-card:hover { transform: translateY(-10px); }
+        .service-card .card-icon { transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
+        .service-card:hover .card-icon { transform: scale(1.1) rotate(5deg); color: #c9a227; }
+
+        .portfolio-item { transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .portfolio-item.hidden { opacity: 0; transform: scale(0.8); pointer-events: none; position: absolute; }
+
+        .stat-number { font-variant-numeric: tabular-nums; }
+
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 1px; background: #c9a227;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        .form-input {
+            background: transparent; border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            transition: border-color 0.3s ease;
+        }
+        .form-input:focus { outline: none; border-bottom-color: #c9a227; }
+
+        .scroll-line {
+            width: 1px; height: 60px;
+            background: linear-gradient(to bottom, #c9a227, transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 1; transform: scaleY(1); }
+            50% { opacity: 0.5; transform: scaleY(0.5); }
+        }
+
+        .mobile-menu {
+            clip-path: circle(0% at calc(100% - 40px) 40px);
+            transition: clip-path 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .mobile-menu.open { clip-path: circle(150% at calc(100% - 40px) 40px); }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #c9a227 0%, #f5f0e8 50%, #c9a227 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shine 3s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .floating { animation: float 6s ease-in-out infinite; }
+
+        .img-reveal {
+            clip-path: inset(0 100% 0 0);
+            transition: clip-path 1s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .img-reveal.revealed { clip-path: inset(0 0 0 0); }
+    </style>
+<base target="_blank">
+</head>
+<body class="bg-sarda-dark text-white font-sans overflow-x-hidden">
+    <div class="noise-overlay"></div>
+
+    <div class="cursor-dot hidden lg:block"></div>
+    <div class="cursor-outline hidden lg:block"></div>
+
+    <div class="loading-screen" id="loading-screen">
+        <div class="text-center">
+            <h1 class="font-serif text-4xl md:text-6xl text-white mb-4 tracking-wider">SARDA IMPIANTI</h1>
+            <p class="text-sarda-gold text-sm tracking-[0.3em] uppercase">Cristian Frattini</p>
+        </div>
+        <div class="loading-bar"></div>
+    </div>
+
+    <nav class="fixed top-0 left-0 w-full z-50 transition-all duration-500" id="navbar">
+        <div class="w-full px-6 lg:px-12 py-6 flex items-center justify-between">
+            <a href="#hero" class="relative z-50 group">
+                <span class="font-serif text-2xl lg:text-3xl text-white tracking-wider group-hover:text-sarda-gold transition-colors duration-300">SARDA</span>
+                <span class="block text-[10px] tracking-[0.4em] text-sarda-gold uppercase">Impianti</span>
+            </a>
+
+            <div class="hidden lg:flex items-center gap-10">
+                <a href="#about" class="nav-link text-sm tracking-wider uppercase text-white/80 hover:text-white transition-colors">Chi Siamo</a>
+                <a href="#services" class="nav-link text-sm tracking-wider uppercase text-white/80 hover:text-white transition-colors">Servizi</a>
+                <a href="#portfolio" class="nav-link text-sm tracking-wider uppercase text-white/80 hover:text-white transition-colors">Progetti</a>
+                <a href="#why-us" class="nav-link text-sm tracking-wider uppercase text-white/80 hover:text-white transition-colors">Perche Noi</a>
+                <a href="#contact" class="magnetic-btn px-8 py-3 border border-sarda-gold text-sarda-gold text-sm tracking-wider uppercase hover:bg-sarda-gold hover:text-sarda-dark transition-all duration-300">Contattaci</a>
+            </div>
+
+            <button class="lg:hidden relative z-50 w-10 h-10 flex flex-col items-center justify-center gap-1.5" id="menu-btn">
+                <span class="w-6 h-px bg-white transition-all duration-300 origin-center" id="line1"></span>
+                <span class="w-6 h-px bg-white transition-all duration-300" id="line2"></span>
+                <span class="w-6 h-px bg-white transition-all duration-300 origin-center" id="line3"></span>
+            </button>
+        </div>
+
+        <div class="mobile-menu fixed inset-0 bg-sarda-dark/98 backdrop-blur-xl z-40 flex items-center justify-center" id="mobile-menu">
+            <div class="flex flex-col items-center gap-8">
+                <a href="#about" class="text-3xl font-serif text-white hover:text-sarda-gold transition-colors mobile-link">Chi Siamo</a>
+                <a href="#services" class="text-3xl font-serif text-white hover:text-sarda-gold transition-colors mobile-link">Servizi</a>
+                <a href="#portfolio" class="text-3xl font-serif text-white hover:text-sarda-gold transition-colors mobile-link">Progetti</a>
+                <a href="#why-us" class="text-3xl font-serif text-white hover:text-sarda-gold transition-colors mobile-link">Perche Noi</a>
+                <a href="#contact" class="text-3xl font-serif text-sarda-gold mobile-link">Contattaci</a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="hero" class="relative w-full h-screen flex items-center justify-center overflow-hidden">
+        <canvas id="hero-canvas"></canvas>
+        <div class="absolute inset-0 bg-gradient-to-b from-sarda-dark/50 via-transparent to-sarda-dark z-10"></div>
+
+        <div class="relative z-20 text-center px-6 max-w-5xl mx-auto">
+            <div class="mb-6 overflow-hidden">
+                <p class="text-sarda-gold text-sm md:text-base tracking-[0.4em] uppercase translate-y-full" id="hero-subtitle">Impianti Termoidraulici & Antincendio</p>
+            </div>
+
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl text-white mb-8 leading-tight">
+                <span class="block overflow-hidden">
+                    <span class="inline-block translate-y-full" id="hero-title-1">Eccellenza</span>
+                </span>
+                <span class="block overflow-hidden">
+                    <span class="inline-block translate-y-full text-sarda-gold" id="hero-title-2">Tecnica</span>
+                </span>
+            </h1>
+
+            <p class="text-white/70 text-lg md:text-xl max-w-2xl mx-auto mb-12 opacity-0" id="hero-desc">
+                Progettazione e installazione di impianti civili e industriali in Sardegna. Qualita, innovazione e affidabilita dal 2008.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center opacity-0" id="hero-cta">
+                <a href="#services" class="magnetic-btn px-10 py-4 bg-sarda-gold text-sarda-dark font-medium tracking-wider uppercase hover:bg-white transition-all duration-300">Scopri i Servizi</a>
+                <a href="#contact" class="magnetic-btn px-10 py-4 border border-white/30 text-white font-medium tracking-wider uppercase hover:border-sarda-gold hover:text-sarda-gold transition-all duration-300">Richiedi Preventivo</a>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 opacity-0" id="scroll-indicator">
+            <span class="text-[10px] tracking-[0.3em] uppercase text-white/50">Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <section id="about" class="relative w-full py-32 lg:py-40 overflow-hidden">
+        <div class="w-full px-6 lg:px-12">
+            <div class="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center max-w-7xl mx-auto">
+                <div class="relative">
+                    <div class="relative z-10">
+                        <p class="text-sarda-gold text-sm tracking-[0.3em] uppercase mb-6">Chi Siamo</p>
+                        <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-white mb-8 leading-tight">
+                            Tradizione e<br><span class="text-sarda-gold">Innovazione</span>
+                        </h2>
+                        <div class="space-y-6 text-white/70 text-lg leading-relaxed">
+                            <p>
+                                Sarda Impianti, fondata da <strong class="text-white">Cristian Frattini</strong>, rappresenta un punto di riferimento nel settore termoidraulico e antincendio in Sardegna. Con oltre 15 anni di esperienza, uniamo competenza tecnica e passione per offrire soluzioni su misura.
+                            </p>
+                            <p>
+                                Dalla progettazione all'installazione, dalla manutenzione alla certificazione, gestiamo ogni fase con precisione millimetrica. Il nostro team di tecnici qualificati garantisce standard elevati per ogni tipo di intervento, civile o industriale.
+                            </p>
+                            <p>
+                                Siamo partner affidabili per aziende, condomini e privati che cercano qualita, efficienza energetica e conformita normativa.
+                            </p>
+                        </div>
+
+                        <div class="mt-10 flex items-center gap-8">
+                            <div>
+                                <span class="block font-serif text-4xl text-sarda-gold">15+</span>
+                                <span class="text-sm text-white/50">Anni di Esperienza</span>
+                            </div>
+                            <div class="w-px h-12 bg-white/10"></div>
+                            <div>
+                                <span class="block font-serif text-4xl text-sarda-gold">500+</span>
+                                <span class="text-sm text-white/50">Progetti Completati</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absolute -top-20 -left-20 w-64 h-64 border border-sarda-gold/10 rounded-full floating opacity-50"></div>
+                </div>
+
+                <div class="relative">
+                    <div class="relative aspect-[4/5] overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80" alt="Tecnico al lavoro su impianto industriale" class="w-full h-full object-cover img-reveal" id="about-img">
+                        <div class="absolute inset-0 bg-gradient-to-t from-sarda-dark/60 to-transparent"></div>
+                    </div>
+
+                    <div class="absolute -bottom-8 -left-8 bg-sarda-gold p-8 max-w-xs">
+                        <p class="font-serif text-sarda-dark text-xl italic">"La qualita non e un atto, e un'abitudine."</p>
+                        <p class="text-sarda-dark/70 text-sm mt-2">- Cristian Frattini</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="relative w-full py-32 lg:py-40 bg-sarda-dark">
+        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-sarda-gold/20 to-transparent"></div>
+
+        <div class="w-full px-6 lg:px-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-20">
+                    <p class="text-sarda-gold text-sm tracking-[0.3em] uppercase mb-6">I Nostri Servizi</p>
+                    <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-white mb-6">
+                        Soluzioni <span class="text-sarda-gold">Complete</span>
+                    </h2>
+                    <p class="text-white/60 max-w-2xl mx-auto text-lg">
+                        Dalla climatizzazione agli impianti antincendio, offriamo un servizio integrato per ogni esigenza civile e industriale.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="service-card group relative bg-white/5 border border-white/10 p-8 lg:p-10 hover:border-sarda-gold/30 hover:bg-white/10 cursor-pointer">
+                        <div class="card-icon text-sarda-gold mb-6">
+                            <i data-lucide="wind" class="w-12 h-12"></i>
+                        </div>
+                        <h3 class="font-serif text-2xl text-white mb-4 group-hover:text-sarda-gold transition-colors">Climatizzazione</h3>
+                        <p class="text-white/60 text-sm leading-relaxed mb-6">
+                            Installazione e manutenzione di sistemi di condizionamento, pompe di calore e VRF per ambienti civili e industriali.
+                        </p>
+                        <ul class="space-y-2 text-white/40 text-sm">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Condizionamento split e multi-split</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Pompe di calore aria/acqua</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Sistemi VRF/VRV</li>
+                        </ul>
+                        <div class="mt-8 pt-6 border-t border-white/10">
+                            <span class="text-sarda-gold text-sm tracking-wider uppercase flex items-center gap-2 group-hover:gap-4 transition-all">Scopri di piu <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="service-card group relative bg-white/5 border border-white/10 p-8 lg:p-10 hover:border-sarda-gold/30 hover:bg-white/10 cursor-pointer">
+                        <div class="card-icon text-sarda-gold mb-6">
+                            <i data-lucide="flame" class="w-12 h-12"></i>
+                        </div>
+                        <h3 class="font-serif text-2xl text-white mb-4 group-hover:text-sarda-gold transition-colors">Riscaldamento</h3>
+                        <p class="text-white/60 text-sm leading-relaxed mb-6">
+                            Progettazione e installazione di impianti di riscaldamento tradizionali e a basso consumo energetico.
+                        </p>
+                        <ul class="space-y-2 text-white/40 text-sm">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Caldaie a condensazione</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Riscaldamento a pavimento</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Termoarredi e radiatori</li>
+                        </ul>
+                        <div class="mt-8 pt-6 border-t border-white/10">
+                            <span class="text-sarda-gold text-sm tracking-wider uppercase flex items-center gap-2 group-hover:gap-4 transition-all">Scopri di piu <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="service-card group relative bg-white/5 border border-white/10 p-8 lg:p-10 hover:border-sarda-gold/30 hover:bg-white/10 cursor-pointer">
+                        <div class="card-icon text-sarda-gold mb-6">
+                            <i data-lucide="droplets" class="w-12 h-12"></i>
+                        </div>
+                        <h3 class="font-serif text-2xl text-white mb-4 group-hover:text-sarda-gold transition-colors">Impianti Idrici</h3>
+                        <p class="text-white/60 text-sm leading-relaxed mb-6">
+                            Realizzazione di impianti idrico-sanitari, trattamento acque e sistemi di recupero piovana.
+                        </p>
+                        <ul class="space-y-2 text-white/40 text-sm">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Reti idriche civili e industriali</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Addolcitori e filtri</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Recupero acque meteoriche</li>
+                        </ul>
+                        <div class="mt-8 pt-6 border-t border-white/10">
+                            <span class="text-sarda-gold text-sm tracking-wider uppercase flex items-center gap-2 group-hover:gap-4 transition-all">Scopri di piu <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="service-card group relative bg-white/5 border border-white/10 p-8 lg:p-10 hover:border-sarda-gold/30 hover:bg-white/10 cursor-pointer">
+                        <div class="card-icon text-sarda-gold mb-6">
+                            <i data-lucide="shield-check" class="w-12 h-12"></i>
+                        </div>
+                        <h3 class="font-serif text-2xl text-white mb-4 group-hover:text-sarda-gold transition-colors">Antincendio</h3>
+                        <p class="text-white/60 text-sm leading-relaxed mb-6">
+                            Progettazione e manutenzione di impianti di rivelazione e spegnimento conformi alle normative vigenti.
+                        </p>
+                        <ul class="space-y-2 text-white/40 text-sm">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Rivelazione fumi e calore</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Impianti sprinkler</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-sarda-gold"></i>Certificazioni e collaudi</li>
+                        </ul>
+                        <div class="mt-8 pt-6 border-t border-white/10">
+                            <span class="text-sarda-gold text-sm tracking-wider uppercase flex items-center gap-2 group-hover:gap-4 transition-all">Scopri di piu <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="why-us" class="relative w-full py-32 lg:py-40 overflow-hidden">
+        <div class="w-full px-6 lg:px-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div class="order-2 lg:order-1">
+                        <p class="text-sarda-gold text-sm tracking-[0.3em] uppercase mb-6">Perche Sceglierci</p>
+                        <h2 class="font-serif text-4xl md:text-5xl text-white mb-8">
+                            Standard di <span class="text-sarda-gold">Eccellenza</span>
+                        </h2>
+                        <p class="text-white/60 text-lg mb-12">
+                            Ci distinguono competenza certificata, materiali di prima qualita e un servizio clienti attento e tempestivo.
+                        </p>
+
+                        <div class="space-y-8">
+                            <div class="flex gap-6 group">
+                                <div class="flex-shrink-0 w-16 h-16 bg-sarda-gold/10 border border-sarda-gold/20 flex items-center justify-center group-hover:bg-sarda-gold/20 transition-colors">
+                                    <i data-lucide="award" class="w-8 h-8 text-sarda-gold"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-serif text-xl text-white mb-2">Tecnici Certificati</h4>
+                                    <p class="text-white/50 text-sm leading-relaxed">Team qualificato con certificazioni F-Gas, antincendio e sicurezza sul lavoro aggiornate.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6 group">
+                                <div class="flex-shrink-0 w-16 h-16 bg-sarda-gold/10 border border-sarda-gold/20 flex items-center justify-center group-hover:bg-sarda-gold/20 transition-colors">
+                                    <i data-lucide="zap" class="w-8 h-8 text-sarda-gold"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-serif text-xl text-white mb-2">Efficienza Energetica</h4>
+                                    <p class="text-white/50 text-sm leading-relaxed">Soluzioni innovative per ridurre i consumi e ottimizzare le prestazioni degli impianti.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6 group">
+                                <div class="flex-shrink-0 w-16 h-16 bg-sarda-gold/10 border border-sarda-gold/20 flex items-center justify-center group-hover:bg-sarda-gold/20 transition-colors">
+                                    <i data-lucide="clock" class="w-8 h-8 text-sarda-gold"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-serif text-xl text-white mb-2">Interventi Rapidi</h4>
+                                    <p class="text-white/50 text-sm leading-relaxed">Servizio di emergenza 24/7 con tempi di intervento garantiti su tutto il territorio sardo.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6 group">
+                                <div class="flex-shrink-0 w-16 h-16 bg-sarda-gold/10 border border-sarda-gold/20 flex items-center justify-center group-hover:bg-sarda-gold/20 transition-colors">
+                                    <i data-lucide="file-check" class="w-8 h-8 text-sarda-gold"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-serif text-xl text-white mb-2">Normative Aggiornate</h4>
+                                    <p class="text-white/50 text-sm leading-relaxed">Conformita totale alle normative UNI, CEI e DM per impianti sicuri e certificati.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-1 lg:order-2 relative">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-4 mt-12">
+                                <div class="bg-white/5 border border-white/10 p-8 text-center">
+                                    <span class="block font-serif text-5xl text-sarda-gold stat-number" data-target="500">0</span>
+                                    <span class="text-white/50 text-sm mt-2 block">Progetti</span>
+                                </div>
+                                <div class="bg-white/5 border border-white/10 p-8 text-center">
+                                    <span class="block font-serif text-5xl text-sarda-gold stat-number" data-target="98">0</span>
+                                    <span class="text-white/50 text-sm mt-2 block">% Clienti Soddisfatti</span>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="bg-white/5 border border-white/10 p-8 text-center">
+                                    <span class="block font-serif text-5xl text-sarda-gold stat-number" data-target="15">0</span>
+                                    <span class="text-white/50 text-sm mt-2 block">Anni Esperienza</span>
+                                </div>
+                                <div class="bg-white/5 border border-white/10 p-8 text-center">
+                                    <span class="block font-serif text-5xl text-sarda-gold stat-number" data-target="24">0</span>
+                                    <span class="text-white/50 text-sm mt-2 block">h su 24</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] border border-sarda-gold/5 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio" class="relative w-full py-32 lg:py-40 bg-sarda-dark">
+        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-sarda-gold/20 to-transparent"></div>
+
+        <div class="w-full px-6 lg:px-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-16">
+                    <div>
+                        <p class="text-sarda-gold text-sm tracking-[0.3em] uppercase mb-6">Portafoglio</p>
+                        <h2 class="font-serif text-4xl md:text-5xl text-white">I Nostri <span class="text-sarda-gold">Progetti</span></h2>
+                    </div>
+
+                    <div class="flex gap-4 mt-8 lg:mt-0">
+                        <button class="portfolio-filter active px-6 py-2 border border-sarda-gold bg-sarda-gold text-sarda-dark text-sm tracking-wider uppercase transition-all" data-filter="all">Tutti</button>
+                        <button class="portfolio-filter px-6 py-2 border border-white/20 text-white/70 text-sm tracking-wider uppercase hover:border-sarda-gold hover:text-sarda-gold transition-all" data-filter="civil">Civile</button>
+                        <button class="portfolio-filter px-6 py-2 border border-white/20 text-white/70 text-sm tracking-wider uppercase hover:border-sarda-gold hover:text-sarda-gold transition-all" data-filter="industrial">Industriale</button>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="portfolio-grid">
+                    <div class="portfolio-item group relative aspect-[4/3] overflow-hidden cursor-pointer" data-category="industrial">
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80" alt="Impianto industriale" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-sarda-dark via-sarda-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute bottom-0 left-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                            <span class="text-sarda-gold text-xs tracking-wider uppercase">Industriale</span>
+                            <h4 class="font-serif text-xl text-white mt-1">Centro Logistico Olbia</h4>
+                            <p class="text-white/60 text-sm mt-2">Impianto climatizzazione VRF e antincendio</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-item group relative aspect-[4/3] overflow-hidden cursor-pointer" data-category="civil">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80" alt="Villa privata" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-sarda-dark via-sarda-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute bottom-0 left-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                            <span class="text-sarda-gold text-xs tracking-wider uppercase">Civile</span>
+                            <h4 class="font-serif text-xl text-white mt-1">Villa Privata Costa Smeralda</h4>
+                            <p class="text-white/60 text-sm mt-2">Riscaldamento a pavimento e condizionamento</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-item group relative aspect-[4/3] overflow-hidden cursor-pointer" data-category="industrial">
+                        <img src="https://images.unsplash.com/photo-1565514020176-db9af638a4d0?w=600&q=80" alt="Capannone industriale" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-sarda-dark via-sarda-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute bottom-0 left-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                            <span class="text-sarda-gold text-xs tracking-wider uppercase">Industriale</span>
+                            <h4 class="font-serif text-xl text-white mt-1">Stabilimento Alimentare</h4>
+                            <p class="text-white/60 text-sm mt-2">Impianto frigorifero industriale e idrico</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-item group relative aspect-[4/3] overflow-hidden cursor-pointer" data-category="civil">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80" alt="Condominio" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-sarda-dark via-sarda-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute bottom-0 left-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                            <span class="text-sarda-gold text-xs tracking-wider uppercase">Civile</span>
+                            <h4 class="font-serif text-xl text-white mt-1">Condominio Nuoro</h4>
+                            <p class="text-white/60 text-sm mt-2">Riqualificazione impianto termico centralizzato</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-item group relative aspect-[4/3] overflow-hidden cursor-pointer" data-category="industrial">
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80" alt="Uffici" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-sarda-dark via-sarda-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute bottom-0 left-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                            <span class="text-sarda-gold text-xs tracking-wider uppercase">Industriale</span>
+                            <h4 class="font-serif text-xl text-white mt-1">Complesso Uffici Cagliari</h4>
+                            <p class="text-white/60 text-sm mt-2">Climatizzazione multi-split e antincendio</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-item group relative aspect-[4/3] overflow-hidden cursor-pointer" data-category="civil">
+                        <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&q=80" alt="Residenza" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-sarda-dark via-sarda-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute bottom-0 left-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                            <span class="text-sarda-gold text-xs tracking-wider uppercase">Civile</span>
+                            <h4 class="font-serif text-xl text-white mt-1">Residenza Sassari</h4>
+                            <p class="text-white/60 text-sm mt-2">Impianto idrico-sanitario e addolcimento</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative w-full py-24 lg:py-32 overflow-hidden">
+        <div class="w-full px-6 lg:px-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <p class="text-sarda-gold text-sm tracking-[0.3em] uppercase mb-6">Certificazioni</p>
+                    <h2 class="font-serif text-3xl md:text-4xl text-white">Qualita <span class="text-sarda-gold">Garantita</span></h2>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div class="text-center group">
+                        <div class="w-24 h-24 mx-auto bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-4 group-hover:border-sarda-gold/30 transition-colors">
+                            <i data-lucide="badge-check" class="w-10 h-10 text-sarda-gold"></i>
+                        </div>
+                        <h4 class="text-white font-medium mb-1">Certificazione F-Gas</h4>
+                        <p class="text-white/40 text-sm">Gestione gas fluorurati</p>
+                    </div>
+
+                    <div class="text-center group">
+                        <div class="w-24 h-24 mx-auto bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-4 group-hover:border-sarda-gold/30 transition-colors">
+                            <i data-lucide="shield" class="w-10 h-10 text-sarda-gold"></i>
+                        </div>
+                        <h4 class="text-white font-medium mb-1">ISO 9001</h4>
+                        <p class="text-white/40 text-sm">Sistema qualita</p>
+                    </div>
+
+                    <div class="text-center group">
+                        <div class="w-24 h-24 mx-auto bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-4 group-hover:border-sarda-gold/30 transition-colors">
+                            <i data-lucide="flame" class="w-10 h-10 text-sarda-gold"></i>
+                        </div>
+                        <h4 class="text-white font-medium mb-1">Antincendio UNI</h4>
+                        <p class="text-white/40 text-sm">Normativa vigente</p>
+                    </div>
+
+                    <div class="text-center group">
+                        <div class="w-24 h-24 mx-auto bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-4 group-hover:border-sarda-gold/30 transition-colors">
+                            <i data-lucide="leaf" class="w-10 h-10 text-sarda-gold"></i>
+                        </div>
+                        <h4 class="text-white font-medium mb-1">Efficienza Energetica</h4>
+                        <p class="text-white/40 text-sm">Classe A+++</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="relative w-full py-32 lg:py-40 bg-sarda-dark">
+        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-sarda-gold/20 to-transparent"></div>
+
+        <div class="w-full px-6 lg:px-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid lg:grid-cols-2 gap-16 lg:gap-24">
+                    <div>
+                        <p class="text-sarda-gold text-sm tracking-[0.3em] uppercase mb-6">Contatti</p>
+                        <h2 class="font-serif text-4xl md:text-5xl text-white mb-8">Iniziamo un <span class="text-sarda-gold">Progetto</span></h2>
+                        <p class="text-white/60 text-lg mb-12">
+                            Siamo a tua disposizione per consulenze, preventivi e sopralluoghi gratuiti su tutto il territorio della Sardegna.
+                        </p>
+
+                        <div class="space-y-8">
+                            <div class="flex items-start gap-6">
+                                <div class="flex-shrink-0 w-12 h-12 bg-sarda-gold/10 border border-sarda-gold/20 flex items-center justify-center">
+                                    <i data-lucide="map-pin" class="w-5 h-5 text-sarda-gold"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-medium mb-1">Indirizzo</h4>
+                                    <p class="text-white/50">Via Fabian Mele - Str. B, 7/n 31<br>08100 Zona Industriale Prato Sardo NU</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-6">
+                                <div class="flex-shrink-0 w-12 h-12 bg-sarda-gold/10 border border-sarda-gold/20 flex items-center justify-center">
+                                    <i data-lucide="phone" class="w-5 h-5 text-sarda-gold"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-medium mb-1">Telefono</h4>
+                                    <p class="text-white/50">
+                                        <a href="tel:+393497819330" class="hover:text-sarda-gold transition-colors">349 781 9330</a><br>
+                                        <span class="text-sm">Disponibile anche WhatsApp</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-6">
+                                <div class="flex-shrink-0 w-12 h-12 bg-sarda-gold/10 border border-sarda-gold/20 flex items-center justify-center">
+                                    <i data-lucide="mail" class="w-5 h-5 text-sarda-gold"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-medium mb-1">Email</h4>
+                                    <p class="text-white/50">
+                                        <a href="mailto:info@sardaimpianti.it" class="hover:text-sarda-gold transition-colors">info@sardaimpianti.it</a>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-6">
+                                <div class="flex-shrink-0 w-12 h-12 bg-sarda-gold/10 border border-sarda-gold/20 flex items-center justify-center">
+                                    <i data-lucide="clock" class="w-5 h-5 text-sarda-gold"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-medium mb-1">Orari</h4>
+                                    <p class="text-white/50">Lun - Ven: 08:00 - 18:00<br>Sab: 08:00 - 12:00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/5 border border-white/10 p-8 lg:p-12">
+                        <h3 class="font-serif text-2xl text-white mb-8">Richiedi un Preventivo</h3>
+
+                        <form class="space-y-8" id="contact-form">
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div>
+                                    <label class="block text-white/50 text-sm mb-2">Nome</label>
+                                    <input type="text" class="form-input w-full py-3 text-white" placeholder="Mario" required>
+                                </div>
+                                <div>
+                                    <label class="block text-white/50 text-sm mb-2">Cognome</label>
+                                    <input type="text" class="form-input w-full py-3 text-white" placeholder="Rossi" required>
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div>
+                                    <label class="block text-white/50 text-sm mb-2">Email</label>
+                                    <input type="email" class="form-input w-full py-3 text-white" placeholder="mario@esempio.it" required>
+                                </div>
+                                <div>
+                                    <label class="block text-white/50 text-sm mb-2">Telefono</label>
+                                    <input type="tel" class="form-input w-full py-3 text-white" placeholder="+39 123 456 7890">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-white/50 text-sm mb-2">Tipo di Servizio</label>
+                                <select class="form-input w-full py-3 text-white bg-transparent">
+                                    <option value="" class="bg-sarda-dark">Seleziona un servizio</option>
+                                    <option value="climatizzazione" class="bg-sarda-dark">Climatizzazione</option>
+                                    <option value="riscaldamento" class="bg-sarda-dark">Riscaldamento</option>
+                                    <option value="idraulico" class="bg-sarda-dark">Impianti Idrici</option>
+                                    <option value="antincendio" class="bg-sarda-dark">Antincendio</option>
+                                    <option value="altro" class="bg-sarda-dark">Altro</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-white/50 text-sm mb-2">Messaggio</label>
+                                <textarea class="form-input w-full py-3 text-white resize-none" rows="4" placeholder="Descrivi il tuo progetto..."></textarea>
+                            </div>
+
+                            <button type="submit" class="magnetic-btn w-full py-4 bg-sarda-gold text-sarda-dark font-medium tracking-wider uppercase hover:bg-white transition-all duration-300">Invia Richiesta</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="mt-16 h-96 bg-white/5 border border-white/10 overflow-hidden">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3023!2d8.8!3d40.3!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDE4JzAwLjAiTiA4wrA0OCcwMC4wIkU!5e0!3m2!1sit!2sit!4v1" width="100%" height="100%" style="border:0; filter: grayscale(100%) invert(92%) contrast(83%);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="relative w-full py-16 bg-sarda-dark border-t border-white/5">
+        <div class="w-full px-6 lg:px-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                    <div>
+                        <span class="font-serif text-3xl text-white tracking-wider">SARDA</span>
+                        <span class="block text-[10px] tracking-[0.4em] text-sarda-gold uppercase mb-6">Impianti</span>
+                        <p class="text-white/40 text-sm leading-relaxed">
+                            Eccellenza tecnica in impianti termoidraulici e antincendio per il settore civile e industriale in Sardegna.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white font-medium mb-6">Servizi</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#services" class="text-white/40 hover:text-sarda-gold transition-colors text-sm">Climatizzazione</a></li>
+                            <li><a href="#services" class="text-white/40 hover:text-sarda-gold transition-colors text-sm">Riscaldamento</a></li>
+                            <li><a href="#services" class="text-white/40 hover:text-sarda-gold transition-colors text-sm">Impianti Idrici</a></li>
+                            <li><a href="#services" class="text-white/40 hover:text-sarda-gold transition-colors text-sm">Antincendio</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white font-medium mb-6">Azienda</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#about" class="text-white/40 hover:text-sarda-gold transition-colors text-sm">Chi Siamo</a></li>
+                            <li><a href="#portfolio" class="text-white/40 hover:text-sarda-gold transition-colors text-sm">Progetti</a></li>
+                            <li><a href="#why-us" class="text-white/40 hover:text-sarda-gold transition-colors text-sm">Certificazioni</a></li>
+                            <li><a href="#contact" class="text-white/40 hover:text-sarda-gold transition-colors text-sm">Lavora con Noi</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white font-medium mb-6">Contatti</h4>
+                        <ul class="space-y-3 text-white/40 text-sm">
+                            <li>Via Fabian Mele - Str. B, 7/n 31</li>
+                            <li>08100 Zona Industriale Prato Sardo NU</li>
+                            <li><a href="tel:+393497819330" class="hover:text-sarda-gold transition-colors">349 781 9330</a></li>
+                            <li><a href="mailto:info@sardaimpianti.it" class="hover:text-sarda-gold transition-colors">info@sardaimpianti.it</a></li>
+                        </ul>
+
+                        <div class="flex gap-4 mt-6">
+                            <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 flex items-center justify-center hover:border-sarda-gold hover:text-sarda-gold transition-all">
+                                <i data-lucide="facebook" class="w-4 h-4"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 flex items-center justify-center hover:border-sarda-gold hover:text-sarda-gold transition-all">
+                                <i data-lucide="instagram" class="w-4 h-4"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 flex items-center justify-center hover:border-sarda-gold hover:text-sarda-gold transition-all">
+                                <i data-lucide="linkedin" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p class="text-white/30 text-sm">&copy; 2024 Sarda Impianti di Cristian Frattini. Tutti i diritti riservati.</p>
+                    <div class="flex gap-6 text-white/30 text-sm">
+                        <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-white transition-colors">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Lenis Smooth Scroll
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // GSAP ScrollTrigger Integration with Lenis
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+                initAnimations();
+            }, 2000);
+        });
+
+        // Custom Cursor
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Cursor hover effect
+        const interactiveElements = document.querySelectorAll('a, button, .service-card, .portfolio-item');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursorOutline.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hover'));
+        });
+
+        // Mobile Menu
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        let menuOpen = false;
+
+        menuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            mobileMenu.classList.toggle('open', menuOpen);
+
+            document.getElementById('line1').style.transform = menuOpen ? 'rotate(45deg) translate(5px, 5px)' : '';
+            document.getElementById('line2').style.opacity = menuOpen ? '0' : '1';
+            document.getElementById('line3').style.transform = menuOpen ? 'rotate(-45deg) translate(5px, -5px)' : '';
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuOpen = false;
+                mobileMenu.classList.remove('open');
+                document.getElementById('line1').style.transform = '';
+                document.getElementById('line2').style.opacity = '1';
+                document.getElementById('line3').style.transform = '';
+            });
+        });
+
+        // Navigation background on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.style.background = 'rgba(15, 23, 42, 0.95)';
+                navbar.style.backdropFilter = 'blur(10px)';
+            } else {
+                navbar.style.background = 'transparent';
+                navbar.style.backdropFilter = 'none';
+            }
+        });
+
+        // Three.js Hero Background
+        function initHeroCanvas() {
+            const canvas = document.getElementById('hero-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 800;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.02,
+                color: 0xc9a227,
+                transparent: true,
+                opacity: 0.6,
+            });
+
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+
+            camera.position.z = 3;
+
+            let mouseX = 0;
+            let mouseY = 0;
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                particlesMesh.rotation.x += 0.0005;
+                particlesMesh.rotation.y += 0.0005;
+                particlesMesh.rotation.x += mouseY * 0.0005;
+                particlesMesh.rotation.y += mouseX * 0.0005;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // GSAP Animations
+        function initAnimations() {
+            gsap.to('#hero-subtitle', { y: 0, duration: 1, delay: 0.5, ease: 'power4.out' });
+            gsap.to('#hero-title-1', { y: 0, duration: 1.2, delay: 0.7, ease: 'power4.out' });
+            gsap.to('#hero-title-2', { y: 0, duration: 1.2, delay: 0.9, ease: 'power4.out' });
+            gsap.to('#hero-desc', { opacity: 1, duration: 1, delay: 1.2, ease: 'power2.out' });
+            gsap.to('#hero-cta', { opacity: 1, duration: 1, delay: 1.4, ease: 'power2.out' });
+            gsap.to('#scroll-indicator', { opacity: 1, duration: 1, delay: 2, ease: 'power2.out' });
+
+            // About section
+            gsap.to('#about-img', {
+                scrollTrigger: {
+                    trigger: '#about',
+                    start: 'top 80%',
+                },
+                className: 'img-reveal revealed'
+            });
+
+            // Service cards
+            gsap.utils.toArray('.service-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%',
+                    },
+                    y: 60,
+                    opacity: 0,
+                    duration: 0.8,
+                    delay: i * 0.1,
+                    ease: 'power3.out'
+                });
+            });
+
+            // Stats counter
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-target'));
+                gsap.to(stat, {
+                    scrollTrigger: {
+                        trigger: stat,
+                        start: 'top 85%',
+                    },
+                    innerText: target,
+                    duration: 2,
+                    snap: { innerText: 1 },
+                    ease: 'power2.out'
+                });
+            });
+
+            // Portfolio items
+            gsap.utils.toArray('.portfolio-item').forEach((item, i) => {
+                gsap.from(item, {
+                    scrollTrigger: {
+                        trigger: item,
+                        start: 'top 85%',
+                    },
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.6,
+                    delay: i * 0.1,
+                    ease: 'power3.out'
+                });
+            });
+
+            // Parallax effect for images
+            gsap.utils.toArray('.parallax-img').forEach(img => {
+                gsap.to(img, {
+                    scrollTrigger: {
+                        trigger: img,
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: 1
+                    },
+                    y: -50,
+                    ease: 'none'
+                });
+            });
+        }
+
+        // Portfolio Filter
+        const filterButtons = document.querySelectorAll('.portfolio-filter');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.getAttribute('data-filter');
+
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-sarda-gold', 'text-sarda-dark', 'border-sarda-gold');
+                    b.classList.add('text-white/70', 'border-white/20');
+                });
+                btn.classList.remove('text-white/70', 'border-white/20');
+                btn.classList.add('bg-sarda-gold', 'text-sarda-dark', 'border-sarda-gold');
+
+                portfolioItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.classList.remove('hidden');
+                        gsap.fromTo(item, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' });
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Contact Form
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = 'Invio in corso...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.textContent = 'Richiesta Inviata!';
+                btn.style.background = '#22c55e';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                    btn.disabled = false;
+                    e.target.reset();
+                }, 3000);
+            }, 1500);
+        });
+
+        // Magnetic Button Effect
+        const magneticBtns = document.querySelectorAll('.magnetic-btn');
+        magneticBtns.forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // Initialize Three.js
+        initHeroCanvas();
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    lenis.scrollTo(target, { offset: -80 });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
